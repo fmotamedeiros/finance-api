@@ -10,11 +10,12 @@
   },
   "rules": {
     "require-jsdoc": "off",
+    "max-len": ["error", { "code": 100 }],
     "new-cap": [
       "error",
       {
         "capIsNewExceptions": [
-          "Router"
+          "Router", "DECIMAL"
         ]
       }
     ],

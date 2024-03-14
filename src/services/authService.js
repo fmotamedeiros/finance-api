@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
+const Account = require('../models/accountModel');
 const bcrypt = require('bcryptjs');
 const {jwtExpiration, jwtSecret} = require('../config/config');
 
@@ -43,6 +44,41 @@ exports.authenticateToken = (req, res, next) => {
     next();
   });
 };
+
+exports.authenticateAndAuthorizeAccount = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return res.status(401).json({message: 'Token is required.'});
+
+  jwt.verify(token, jwtSecret, async (err, decoded) => {
+    if (err) return res.status(403).json({message: 'Access denied.'});
+
+    // Authorization step to verify account ownership
+    try {
+      const {accountId} = req.params;
+      if (!accountId) {
+        throw new Error('Account ID is required.');
+      }
+
+      const account = await Account.findByPk(accountId);
+      if (!account) {
+        throw new Error('Account not found.');
+      }
+
+      if (account.userId !== decoded.id) {
+        throw new Error('User not authorized for this account.');
+      }
+
+      // User is authenticated and authorized to access the account
+      req.user = decoded;
+      next();
+    } catch (authError) {
+      res.status(403).json({message: authError.message});
+    }
+  });
+};
+
 
 exports.isAdmin = (req, res, next) => {
   if (req.user.role !== 'admin') {

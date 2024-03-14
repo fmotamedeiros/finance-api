@@ -14,7 +14,7 @@ exports.createUser = async (req, res) => {
     res.status(201).send(user);
   } catch (error) {
     logger.info(`Error creating user: ${email} | Error: ${error.message}.`);
-    res.status(500).send({erro: error.message});
+    res.status(500).send({error: error.message});
   }
 };
 
@@ -25,6 +25,6 @@ exports.listUsers = async (req, res) => {
     });
     res.status(200).send(users);
   } catch (error) {
-    res.status(500).send({erro: error.message});
+    res.status(500).send({error: error.message});
   }
 };
