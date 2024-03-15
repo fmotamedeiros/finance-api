@@ -11,8 +11,8 @@ describe('Category Model', () => {
 
     // Creating a user before running category tests
     testUser = await User.create({
-      name: 'John Doe',
-      email: 'john@example.com',
+      name: 'Gregor Doe',
+      email: 'gregor@example.com',
       password: 'password'
     });
 

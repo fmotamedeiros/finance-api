@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const Account = require('../models/accountModel');
 const Category = require('../models/categoryModel');
+const Transaction = require('../models/transactionModel');
 const bcrypt = require('bcryptjs');
 const {jwtExpiration, jwtSecret} = require('../config/config');
 
@@ -112,6 +113,47 @@ exports.authenticateAndAuthorizeCategory = async (req, res, next) => {
     }
   });
 };
+
+exports.authenticateAndAuthorizeTransaction = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return res.status(401).json({ message: 'Token is required.' });
+
+  jwt.verify(token, jwtSecret, async (err, decoded) => {
+    if (err) return res.status(403).json({ message: 'Access denied.' });
+
+    try {
+      const { transactionId } = req.params;
+      if (!transactionId) {
+        throw new Error('Transaction ID is required.');
+      }
+
+      const transaction = await Transaction.findByPk(transactionId, {
+        include: [{
+          model: Account,
+          as: 'account',
+        }]
+      });
+
+      if (!transaction) {
+        throw new Error('Transaction not found.');
+      }
+
+      // Verify if the transaction's account is owned by the decoded user
+      if (transaction.account.userId !== decoded.id) {
+        throw new Error('User not authorized for this transaction.');
+      }
+
+      // User is authenticated and authorized to access the transaction
+      req.user = decoded;
+      next();
+    } catch (authError) {
+      res.status(403).json({ message: authError.message });
+    }
+  });
+};
+
 
 exports.isAdmin = (req, res, next) => {
   if (req.user.role !== 'admin') {
