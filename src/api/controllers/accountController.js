@@ -1,7 +1,6 @@
 const Account = require('../../models/accountModel');
 const logger = require('../../config/logger');
 
-// Add an account
 exports.createAccount = async (req, res) => {
   try {
     const {userId, name, balance} = req.body;
@@ -18,7 +17,6 @@ exports.createAccount = async (req, res) => {
   }
 };
 
-// Update an account
 exports.updateAccount = async (req, res) => {
   try {
     const {accountId} = req.params;
@@ -41,7 +39,6 @@ exports.updateAccount = async (req, res) => {
   }
 };
 
-// Delete an account
 exports.deleteAccount = async (req, res) => {
   try {
     const {accountId} = req.params;
@@ -60,7 +57,6 @@ exports.deleteAccount = async (req, res) => {
   }
 };
 
-// List accounts for a user
 exports.listAccountsByUser = async (req, res) => {
   try {
     const {userId} = req.params;

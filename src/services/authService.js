@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const Account = require('../models/accountModel');
+const Category = require('../models/categoryModel');
 const bcrypt = require('bcryptjs');
 const {jwtExpiration, jwtSecret} = require('../config/config');
 
@@ -79,6 +80,38 @@ exports.authenticateAndAuthorizeAccount = async (req, res, next) => {
   });
 };
 
+exports.authenticateAndAuthorizeCategory = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return res.status(401).json({ message: 'Token is required.' });
+
+  jwt.verify(token, jwtSecret, async (err, decoded) => {
+    if (err) return res.status(403).json({ message: 'Access denied.' });
+
+    try {
+      const { categoryId } = req.params;
+      if (!categoryId) {
+        throw new Error('Category ID is required.');
+      }
+
+      const category = await Category.findByPk(categoryId);
+      if (!category) {
+        throw new Error('Category not found.');
+      }
+
+      if (category.userId !== decoded.id) {
+        throw new Error('User not authorized for this category.');
+      }
+
+      // User is authenticated and authorized to access the category
+      req.user = decoded;
+      next();
+    } catch (authError) {
+      res.status(403).json({ message: authError.message });
+    }
+  });
+};
 
 exports.isAdmin = (req, res, next) => {
   if (req.user.role !== 'admin') {
