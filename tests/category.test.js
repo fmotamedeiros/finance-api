@@ -7,26 +7,26 @@ describe('Category Model', () => {
   let testCategory;
 
   beforeAll(async () => {
-    await sequelize.sync({ force: true });
+    await sequelize.sync({force: true});
 
     // Creating a user before running category tests
     testUser = await User.create({
       name: 'Gregor Doe',
       email: 'gregor@example.com',
-      password: 'password'
+      password: 'password',
     });
 
     // Creating a test category
     testCategory = await Category.create({
       userId: testUser.id,
-      name: 'Groceries'
+      name: 'Groceries',
     });
   });
 
   test('should create a new category successfully', async () => {
     const category = await Category.create({
       userId: testUser.id,
-      name: 'Utilities'
+      name: 'Utilities',
     });
 
     expect(category.id).toBeDefined();
@@ -36,12 +36,12 @@ describe('Category Model', () => {
 
   test('should not create a category without a name', async () => {
     await expect(Category.create({
-      userId: testUser.id
+      userId: testUser.id,
     })).rejects.toThrow();
   });
 
   test('should update a category successfully', async () => {
-    await testCategory.update({ name: 'Updated Category' });
+    await testCategory.update({name: 'Updated Category'});
     const updatedCategory = await Category.findByPk(testCategory.id);
 
     expect(updatedCategory.name).toBe('Updated Category');
@@ -56,13 +56,13 @@ describe('Category Model', () => {
 
   test('should list all categories for a user', async () => {
     await Category.bulkCreate([
-      { userId: testUser.id, name: 'Rent' },
-      { userId: testUser.id, name: 'Savings' }
+      {userId: testUser.id, name: 'Rent'},
+      {userId: testUser.id, name: 'Savings'},
     ]);
 
-    const categories = await Category.findAll({ where: { userId: testUser.id } });
+    const categories = await Category.findAll({where: {userId: testUser.id}});
     expect(categories.length).toBeGreaterThan(0);
-    categories.forEach(category => {
+    categories.forEach((category) => {
       expect(category.userId).toBe(testUser.id);
     });
   });

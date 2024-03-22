@@ -10,7 +10,7 @@ const logger = winston.createLogger({
   ],
 });
 
-// If development mode, log to console also
+/* If development mode, log to console */
 if (nodeEnv !== 'production') {
   logger.add(new winston.transports.Console({
     format: winston.format.simple(),

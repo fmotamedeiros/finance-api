@@ -7,7 +7,7 @@ const sequelizeOptions = {
   port: process.env.DB_PORT,
 };
 
-// SSL enabled only in production
+/* SSL is enabled only in production */
 if (process.env.NODE_ENV === 'production') {
   sequelizeOptions.dialectOptions = {
     ssl: {

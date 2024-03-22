@@ -1,12 +1,13 @@
 const sequelize = require('./db');
+const logger = require('./logger');
 
 async function initializeDatabase() {
   const isDevelopment = process.env.NODE_ENV === 'development';
   try {
-    await sequelize.sync({force: isDevelopment});
-    console.log(`Database synchronized${isDevelopment ? ' (dev)' : ''}.`);
+    await sequelize.sync();
+    logger.info(`Database synchronized${isDevelopment ? ' (dev)' : ''}.`);
   } catch (error) {
-    console.error('Failed to synchronize database:', error);
+    logger.error(`Failed to synchronize database: ${error}.`);
     throw error;
   }
 }

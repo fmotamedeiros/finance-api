@@ -17,7 +17,13 @@ exports.authenticateUser = async (email, password) => {
     throw new Error('Invalid credentials.');
   }
 
-  return exports.generateToken(user);
+  return {
+    token: exports.generateToken(user), userDetails: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    },
+  };
 };
 
 exports.generateToken = (user) => {
@@ -85,13 +91,13 @@ exports.authenticateAndAuthorizeCategory = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) return res.status(401).json({ message: 'Token is required.' });
+  if (!token) return res.status(401).json({message: 'Token is required.'});
 
   jwt.verify(token, jwtSecret, async (err, decoded) => {
-    if (err) return res.status(403).json({ message: 'Access denied.' });
+    if (err) return res.status(403).json({message: 'Access denied.'});
 
     try {
-      const { categoryId } = req.params;
+      const {categoryId} = req.params;
       if (!categoryId) {
         throw new Error('Category ID is required.');
       }
@@ -109,7 +115,7 @@ exports.authenticateAndAuthorizeCategory = async (req, res, next) => {
       req.user = decoded;
       next();
     } catch (authError) {
-      res.status(403).json({ message: authError.message });
+      res.status(403).json({message: authError.message});
     }
   });
 };
@@ -118,13 +124,13 @@ exports.authenticateAndAuthorizeTransaction = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) return res.status(401).json({ message: 'Token is required.' });
+  if (!token) return res.status(401).json({message: 'Token is required.'});
 
   jwt.verify(token, jwtSecret, async (err, decoded) => {
-    if (err) return res.status(403).json({ message: 'Access denied.' });
+    if (err) return res.status(403).json({message: 'Access denied.'});
 
     try {
-      const { transactionId } = req.params;
+      const {transactionId} = req.params;
       if (!transactionId) {
         throw new Error('Transaction ID is required.');
       }
@@ -133,7 +139,7 @@ exports.authenticateAndAuthorizeTransaction = async (req, res, next) => {
         include: [{
           model: Account,
           as: 'account',
-        }]
+        }],
       });
 
       if (!transaction) {
@@ -149,7 +155,7 @@ exports.authenticateAndAuthorizeTransaction = async (req, res, next) => {
       req.user = decoded;
       next();
     } catch (authError) {
-      res.status(403).json({ message: authError.message });
+      res.status(403).json({message: authError.message});
     }
   });
 };

@@ -13,7 +13,7 @@ exports.createUser = async (req, res) => {
     logger.info(`User created with email: ${email}.`);
     res.status(201).send(user);
   } catch (error) {
-    logger.info(`Error creating user: ${email} | Error: ${error.message}.`);
+    logger.info(`Error creating user. Error: ${error.message}.`);
     res.status(500).send({error: error.message});
   }
 };

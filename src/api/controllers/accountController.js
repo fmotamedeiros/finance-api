@@ -12,7 +12,7 @@ exports.createAccount = async (req, res) => {
     logger.info(`Account created for user ID: ${userId} with name: ${name}.`);
     res.status(201).send(account);
   } catch (error) {
-    logger.error(`Error creating account for user ID: ${userId} | Error: ${error.message}.`);
+    logger.error(`Error creating account. Error: ${error.message}.`);
     res.status(500).send({error: error.message});
   }
 };
@@ -34,7 +34,7 @@ exports.updateAccount = async (req, res) => {
     logger.info(`Account updated for ID: ${accountId}.`);
     res.status(200).send(account);
   } catch (error) {
-    logger.error(`Error updating account ID: ${accountId} | Error: ${error.message}.`);
+    logger.error(`Error updating account. Error: ${error.message}.`);
     res.status(500).send({error: error.message});
   }
 };
@@ -52,7 +52,7 @@ exports.deleteAccount = async (req, res) => {
     logger.info(`Account deleted for ID: ${accountId}.`);
     res.status(204).send();
   } catch (error) {
-    logger.error(`Error deleting account ID: ${accountId} | Error: ${error.message}.`);
+    logger.error(`Error deleting account. Error: ${error.message}.`);
     res.status(500).send({error: error.message});
   }
 };
@@ -64,15 +64,23 @@ exports.listAccountsByUser = async (req, res) => {
       where: {userId},
       attributes: ['id', 'userId', 'name', 'balance'],
     });
-
-    if (!accounts.length) {
-      return res.status(404).send({message: 'No accounts found for this user.'});
-    }
-
     logger.info(`Accounts listed for user ID: ${userId}.`);
     res.status(200).send(accounts);
   } catch (error) {
-    logger.error(`Error listing accounts for user ID: ${userId} | Error: ${error.message}.`);
+    logger.error(`Error listing accounts. Error: ${error.message}.`);
+    res.status(500).send({error: error.message});
+  }
+};
+
+exports.listAccounts = async (req, res) => {
+  try {
+    const accounts = await Account.findAll({
+      attributes: ['id', 'userId', 'name', 'balance'],
+    });
+    logger.info(`Accounts listed.`);
+    res.status(200).send(accounts);
+  } catch (error) {
+    logger.error(`Error listing accounts | Error: ${error.message}.`);
     res.status(500).send({error: error.message});
   }
 };

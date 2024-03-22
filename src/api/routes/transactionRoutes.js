@@ -1,18 +1,32 @@
 const express = require('express');
 const router = express.Router();
+
 const transactionController = require('../controllers/transactionController');
-const { authenticateAndAuthorizeTransaction, authenticateToken } = require('../../services/authService');
 
-// Create a transaction (User must be authenticated and own the related account)
-router.post('/accounts/:accountId/transactions', 
-    authenticateToken, transactionController.createTransaction);
+const {
+  authenticateAndAuthorizeTransaction,
+  authenticateToken,
+} = require('../../services/authService');
 
-// Update a transaction (User must be authenticated and own the related account and transaction)
-router.put('/transactions/:transactionId', 
-  authenticateAndAuthorizeTransaction, transactionController.updateTransaction);
+router.post(
+  '/transactions',
+  authenticateToken,
+  transactionController.createTransaction,
+);
 
-// Delete a transaction (User must be authenticated and own the related account and transaction)
-router.delete('/transactions/:transactionId', 
-  authenticateAndAuthorizeTransaction, transactionController.deleteTransaction);
+/* To update and delete, user needs to be authenticated
+and must own the related account and transactions */
+
+router.put(
+  '/transactions/:transactionId',
+  authenticateAndAuthorizeTransaction,
+  transactionController.updateTransaction,
+);
+
+router.delete(
+  '/transactions/:transactionId',
+  authenticateAndAuthorizeTransaction,
+  transactionController.deleteTransaction,
+);
 
 module.exports = router;

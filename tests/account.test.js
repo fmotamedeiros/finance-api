@@ -1,20 +1,11 @@
 const sequelize = require('../src/config/db');
-const User = require('../src/models/userModel');
 const Account = require('../src/models/accountModel');
 
 describe('Account Model', () => {
-
   let testAccount;
-  let testUser;
 
   beforeAll(async () => {
     await sequelize.sync({force: true});
-  
-    // Creating an user account before running tests
-    testUser = await User.create({
-      name: 'Mary',
-      email: 'mary@example.com',
-      password: '123456'});
 
     // Creating an account before running tests
     testAccount = await Account.create({
@@ -22,7 +13,6 @@ describe('Account Model', () => {
       name: 'Test Account',
       balance: 500.00,
     });
-  
   });
 
   test('should create a new account successfully', async () => {
@@ -47,7 +37,7 @@ describe('Account Model', () => {
 
   test('should update an account successfully', async () => {
     const updatedBalance = 2000.00;
-    await testAccount.update({ balance: updatedBalance });
+    await testAccount.update({balance: updatedBalance});
     expect(testAccount.balance).toBe(updatedBalance);
   });
 
@@ -59,13 +49,13 @@ describe('Account Model', () => {
 
   test('should list all accounts for a user', async () => {
     await Account.bulkCreate([
-      { userId: 1, name: 'Account 1', balance: 100 },
-      { userId: 1, name: 'Account 2', balance: 200 }
+      {userId: 1, name: 'Account 1', balance: 100},
+      {userId: 1, name: 'Account 2', balance: 200},
     ]);
 
-    const accounts = await Account.findAll({ where: { userId: 1 } });
+    const accounts = await Account.findAll({where: {userId: 1}});
     expect(accounts.length).toBeGreaterThan(0);
-    accounts.forEach(account => {
+    accounts.forEach((account) => {
       expect(account.userId).toBe(1);
     });
   });
@@ -83,7 +73,6 @@ describe('Account Model', () => {
       balance: 300.00,
     })).rejects.toThrow();
   });
-  
 });
 
 afterAll(async () => {

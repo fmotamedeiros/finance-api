@@ -54,12 +54,12 @@ const User = sequelize.define('User', {
     },
   },
 }, {
-  // Enable soft deletes
+  /* Enabling soft deletes */
   paranoid: true,
   timestamps: true,
 });
 
-// Password hashing middleware
+/* Password hashing middleware */
 User.beforeSave(async (user) => {
   if (user.changed('password')) {
     const salt = await bcrypt.genSalt(10);

@@ -12,11 +12,15 @@ exports.login = async (req, res) => {
       });
     }
 
-    const token = await authenticateUser(email, password);
+    const authenticatedUser = await authenticateUser(email, password);
     logger.info(`Login successful for user: ${email}.`);
-    res.json({token, expiresIn: jwtExpiration});
+    res.json({
+      token: authenticatedUser.token,
+      user: authenticatedUser.userDetails,
+      expiresIn: jwtExpiration,
+    });
   } catch (error) {
-    logger.error(`Login attempt failed for user | Error: ${error.message}.`);
+    logger.error(`Login attempt failed for user. Error: ${error.message}.`);
     if (error.message === 'Invalid credentials.') {
       return res.status(401).json({message: 'Invalid credentials.'});
     }
