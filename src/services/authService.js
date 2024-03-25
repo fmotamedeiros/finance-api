@@ -131,6 +131,7 @@ exports.authenticateAndAuthorizeTransaction = async (req, res, next) => {
 
     try {
       const {transactionId} = req.params;
+
       if (!transactionId) {
         throw new Error('Transaction ID is required.');
       }
@@ -155,6 +156,7 @@ exports.authenticateAndAuthorizeTransaction = async (req, res, next) => {
       req.user = decoded;
       next();
     } catch (authError) {
+      console.log(authError.message);
       res.status(403).json({message: authError.message});
     }
   });

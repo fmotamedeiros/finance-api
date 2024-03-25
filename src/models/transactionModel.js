@@ -44,6 +44,8 @@ const Transaction = sequelize.define('Transaction', {
   timestamps: true,
 });
 
+Transaction.belongsTo(Account, {foreignKey: 'accountId', as: 'account'});
+
 /* Updating balance after creating transaction */
 Transaction.afterCreate(async (transaction, options) => {
   const account = await Account.findByPk(transaction.accountId);
